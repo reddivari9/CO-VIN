@@ -16,7 +16,7 @@ html {
 
 .available-container,
 .all-centers-container {
-    height: calc(100vh - 42px);
+    height: calc(100vh - 122px);
     width: 100%;
     border: 1px solid white;
     margin: 20px;
@@ -24,7 +24,6 @@ html {
     overflow: scroll;
     position: relative;
 }
-
 .title {
     position: sticky;
     top: 0;
@@ -76,4 +75,116 @@ html {
     justify-content: center;
     align-items: center;
     height: 100%;
+}
+
+.icon-button {
+    padding: 6px 20px;
+}
+.icon-button > span {
+    padding: 0 6px;
+}
+
+a {
+    text-decoration: none;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 70px;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.logo {
+    cursor: pointer;
+}
+
+.nav-area {
+    list-style: none;
+    padding: 0;
+}
+
+.nav-area li {
+    display: inline-block;
+    padding: 0 15px;
+    text-transform: uppercase;
+}
+
+.nav-area li a {
+    transition: 0.3s;
+    color: #000;
+}
+
+.nav-area li a:hover {
+    color: #d22938;
+}
+
+.btn-area {
+    cursor: pointer;
+    color: #000;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 10px 30px;
+    border-radius: 5px;
+    background: #d22938;
+}
+
+.volume-controll {
+    display: flex;
+    flex-direction: row;
+}
+
+.token-input {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    /* min-height: 80%; */
+}
+
+.token-input > label {
+    color: #fff;
+    padding: 20px;
+}
+.token-input > textarea {
+    min-height: 200px;
+    min-width: 70%;
+}
+
+.token-alert {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: row;
+    word-wrap: break-word;
+    word-break: break-all;
+    padding: 20px;
+    min-height: 20%;
+}
+
+.error {
+    color: #d22938;
+}
+
+@media only screen and (max-width: 600px) {
+    .App-header,
+    .volume-controll {
+        flex-direction: column;
+        overflow: none;
+    }
+    .available-container,
+    .all-centers-container {
+        height: fit-content;
+        overflow: none;
+    }
+
+    .loader,
+    header {
+        height: fit-content;
+        padding: 10px;
+    }
 }

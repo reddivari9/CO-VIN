@@ -2,62 +2,28 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
- * @modify date 2021-05-04 12:50:19
+ * @modify date 2021-05-04 22:19:12
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
-import moment from 'moment';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import TextToSpeechStream from 'text-to-speech-stream';
+import moment from 'moment';
+
+import SlotsAvailableAlert from './components/Alert/SlotsAvailableAlert';
+import AutomaticSlotBooking from './components/Booking/AutomaticSlotBooking';
+import Button from './components/Button/Button';
 
 import './App.css';
 
-const vaccineAvailableVoice = (age) => {
-    console.log('Available voice......');
-    TextToSpeechStream.getVoices(); // Return all voice objects
-    var voice = TextToSpeechStream.getVoiceByName('Alex');
-
-    var synthesizer = new TextToSpeechStream({
-        voice: voice,
-        pitch: 1,
-        rate: 1,
-    });
-
-    synthesizer.write('Covid vaccines are available for ' + age);
-};
-
-const renderList = (center) => {
-    return (
-        <div className="row border-line">
-            <div className="updated-time">{moment().format('HH:MM:SS')}</div>
-
-            <div className="column">
-                <div className="row">
-                    <div>{center.date}</div>
-                    <div>{center.vaccine}</div>
-                    <div
-                        className={
-                            center.available_capacity > 0 ? 'green' : 'red'
-                        }
-                    >
-                        {center.available_capacity}
-                    </div>
-                </div>
-                <div className="row">
-                    <div>{center.name}</div>
-                    <div>{center.pincode}</div>
-                    <div>{center.session_id}</div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 function App() {
+    const [loading, setLoading] = useState(true);
     const [slotsList18, setSlotsList18] = useState([]);
     const [availableSlots18, setAvailableSlots18] = useState([]);
     const [slotsList45, setSlotsList45] = useState([]);
     const [availableSlots45, setavailableSlots45] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [volumeMute18, setVolumeMute18] = useState(true);
+    const [volumeMute45, setVolumeMute45] = useState(false);
 
     const getData = () => {
         setLoading(true);
@@ -95,22 +61,28 @@ function App() {
                     });
                 });
 
-                if (availableList18.length > 0) {
-                    vaccineAvailableVoice('18+');
-                }
-
-                // if (availableList45.length > 0) {
-                //     vaccineAvailableVoice('45+');
-                // }
-
                 setSlotsList18(list18);
-                setAvailableSlots18([...availableSlots18, ...availableList18]);
+                setAvailableSlots18(availableList18);
                 setSlotsList45(list45);
-                setavailableSlots45([...availableSlots45, ...availableList45]);
+                setavailableSlots45(availableList45);
             })
             .catch((error) => console.log(error))
             .finally(() => setLoading(false));
     };
+
+    useEffect(() => {
+        if (availableSlots18.length > 0 && volumeMute18) {
+            vaccineAvailableVoice('18+');
+        }
+    }, [availableSlots18]);
+
+    useEffect(() => {
+        if (availableSlots45.length > 0 && volumeMute45) {
+            // console.log('Available for 45+ voice....');
+            vaccineAvailableVoice('45+');
+        }
+    }, [availableSlots45]);
+
     useEffect(() => {
         getData();
         let fetchInterval = setInterval(() => getData(), 10000);
@@ -118,45 +90,96 @@ function App() {
             clearTimeout(fetchInterval);
         };
     }, []);
+
+    const vaccineAvailableVoice = (age) => {
+        var voice = TextToSpeechStream.getVoiceByName('Alex');
+
+        var synthesizer = new TextToSpeechStream({
+            voice: voice,
+            pitch: 1,
+            rate: 1,
+        });
+
+        synthesizer.write('Covid vaccines are available for ' + age);
+    };
+
     return (
-        <div>
-            <div className="App-header">
-                <div className="available-container">
-                    <h2 className="title">Slots Available</h2>
-                    {availableSlots18.length === 0 ? (
-                        <div className="loader">No slots available</div>
-                    ) : (
-                        <div>{availableSlots18.map(renderList)}</div>
-                    )}
-                </div>
-                <div className="all-centers-container">
-                    <h2 className="title">centers for 18+</h2>
-                    {loading ? (
-                        <div className="loader">Fetching data...</div>
-                    ) : (
-                        <div>{slotsList18.map(renderList)}</div>
-                    )}
-                </div>
+        <Router>
+            <div>
+                <header>
+                    <nav>
+                        <ul class="nav-area">
+                            <li>
+                                <Link to="/">Home</Link>
+                            </li>
+                            <li>
+                                <Link to="/slots_available">
+                                    Slots available
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/automatic_booking">Booking</Link>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div className="volume-controll">
+                        <Button
+                            onClick={() => setVolumeMute18(!volumeMute18)}
+                            className="icon-button"
+                        >
+                            <span>18+</span>
+                            <i
+                                className={`fa fa-volume-${
+                                    volumeMute18 ? 'up' : 'off'
+                                }`}
+                            ></i>
+                        </Button>
+                        <Button
+                            onClick={() => setVolumeMute45(!volumeMute45)}
+                            className="icon-button"
+                        >
+                            <span>45+</span>
+                            <i
+                                className={`fa fa-volume-${
+                                    volumeMute45 ? 'up' : 'off'
+                                }`}
+                            ></i>
+                        </Button>
+                    </div>
+                    {/* <a class="btn-area">Login</a> */}
+                </header>
+
+                <Switch>
+                    <Route path="/slots_available">
+                        <SlotsAvailableAlert
+                            loading={loading}
+                            slotsList18={slotsList18}
+                            slotsList45={slotsList45}
+                            availableSlots18={availableSlots18}
+                            availableSlots45={availableSlots45}
+                        />
+                    </Route>
+                    <Route path="/automatic_booking">
+                        <AutomaticSlotBooking
+                            loading={loading}
+                            slotsList18={slotsList18}
+                            slotsList45={slotsList45}
+                            availableSlots18={availableSlots18}
+                            availableSlots45={availableSlots45}
+                        />
+                    </Route>
+                    <Route path="/">
+                        <SlotsAvailableAlert
+                            loading={loading}
+                            slotsList18={slotsList18}
+                            slotsList45={slotsList45}
+                            availableSlots18={availableSlots18}
+                            availableSlots45={availableSlots45}
+                        />
+                    </Route>
+                </Switch>
             </div>
-            <div className="App-header">
-                <div className="available-container">
-                    <h2 className="title">Slots Available</h2>
-                    {availableSlots45.length === 0 ? (
-                        <div className="loader">No slots available</div>
-                    ) : (
-                        <div>{availableSlots45.map(renderList)}</div>
-                    )}
-                </div>
-                <div className="all-centers-container">
-                    <h2 className="title">centers for 45+</h2>
-                    {loading ? (
-                        <div className="loader">Fetching data...</div>
-                    ) : (
-                        <div>{slotsList45.map(renderList)}</div>
-                    )}
-                </div>
-            </div>
-        </div>
+        </Router>
     );
 }
 
