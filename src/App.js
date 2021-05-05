@@ -2,7 +2,7 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
- * @modify date 2021-05-04 22:19:12
+ * @modify date 2021-05-05 23:35:48
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
@@ -15,8 +15,11 @@ import AutomaticSlotBooking from './components/Booking/AutomaticSlotBooking';
 import Button from './components/Button/Button';
 
 import './App.css';
+import Home from './components/Home/Home';
+import Login from './components/Login/Login';
 
 function App() {
+    const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
     const [slotsList18, setSlotsList18] = useState([]);
     const [availableSlots18, setAvailableSlots18] = useState([]);
@@ -84,8 +87,14 @@ function App() {
     }, [availableSlots45]);
 
     useEffect(() => {
+        try {
+            let token = sessionStorage.getItem('token');
+            setToken(token);
+        } catch (error) {
+            console.log(error);
+        }
         getData();
-        let fetchInterval = setInterval(() => getData(), 10000);
+        let fetchInterval = setInterval(() => getData(), 2000);
         return () => {
             clearTimeout(fetchInterval);
         };
@@ -103,25 +112,31 @@ function App() {
         synthesizer.write('Covid vaccines are available for ' + age);
     };
 
+    const setTokenHandler = (token) => {
+        setToken(token);
+        sessionStorage.setItem('token', token);
+    };
+
     return (
         <Router>
             <div>
                 <header>
                     <nav>
-                        <ul class="nav-area">
+                        <ul className="nav-area">
                             <li>
                                 <Link to="/">Home</Link>
+                            </li>
+                            <li>
+                                <Link to="/automatic_booking">Booking</Link>
                             </li>
                             <li>
                                 <Link to="/slots_available">
                                     Slots available
                                 </Link>
                             </li>
-                            <li>
-                                <Link to="/automatic_booking">Booking</Link>
-                            </li>
                         </ul>
                     </nav>
+                    <div>{!token && <Login setToken={setTokenHandler} />}</div>
                     <div className="volume-controll">
                         <Button
                             onClick={() => setVolumeMute18(!volumeMute18)}
@@ -146,9 +161,8 @@ function App() {
                             ></i>
                         </Button>
                     </div>
-                    {/* <a class="btn-area">Login</a> */}
                 </header>
-
+                <Home token={token} />
                 <Switch>
                     <Route path="/slots_available">
                         <SlotsAvailableAlert
@@ -161,20 +175,18 @@ function App() {
                     </Route>
                     <Route path="/automatic_booking">
                         <AutomaticSlotBooking
-                            loading={loading}
-                            slotsList18={slotsList18}
-                            slotsList45={slotsList45}
                             availableSlots18={availableSlots18}
                             availableSlots45={availableSlots45}
+                            token={token}
+                            setToken={setTokenHandler}
                         />
                     </Route>
                     <Route path="/">
-                        <SlotsAvailableAlert
-                            loading={loading}
-                            slotsList18={slotsList18}
-                            slotsList45={slotsList45}
+                        <AutomaticSlotBooking
                             availableSlots18={availableSlots18}
                             availableSlots45={availableSlots45}
+                            token={token}
+                            setToken={setTokenHandler}
                         />
                     </Route>
                 </Switch>

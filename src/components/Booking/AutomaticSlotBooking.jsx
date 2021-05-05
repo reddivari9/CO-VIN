@@ -36,7 +36,7 @@ const renderList = (center) => {
         </div>
     );
 };
-const sessionExpiryVoice = () => {
+const sessionExpiryVoice = (text) => {
     var voice = TextToSpeechStream.getVoiceByName('Alex');
 
     var synthesizer = new TextToSpeechStream({
@@ -45,20 +45,19 @@ const sessionExpiryVoice = () => {
         rate: 1,
     });
 
-    synthesizer.write('Session expired');
+    synthesizer.write(text);
 };
 function AutomaticSlotBooking({
-    loading,
-    slotsList18,
-    slotsList45,
     availableSlots18,
     availableSlots45,
+    token,
+    setToken,
 }) {
     const [benificiaryList, setBenificiaryList] = useState([]);
+    const [selectedBeneficiaryList, setSelectedBeneficiaryList] = useState([]);
+    const [shouldSchedule, setShouldSchedule] = useState(false);
     const [isScheduling, setIsScheduling] = useState(false);
     const [appointmentId, setAppointmentId] = useState(null);
-    const [authToken, setAuthToken] = useState('');
-    const [authAlert, setauthAlert] = useState('');
 
     useEffect(() => {
         let sessionExpiryalert = setInterval(() => {
@@ -66,8 +65,7 @@ function AutomaticSlotBooking({
         }, 110000);
 
         setTimeout(() => {
-            setAuthToken('');
-            sessionExpiryVoice();
+            sessionExpiryVoice('Session expired');
         }, 840000);
 
         return () => {
@@ -76,12 +74,15 @@ function AutomaticSlotBooking({
     }, []);
 
     useEffect(() => {
-        if (availableSlots18.length > 0 && benificiaryList.length) {
+        if (
+            availableSlots18.length > 0 &&
+            selectedBeneficiaryList.length &&
+            shouldSchedule
+        ) {
             let isSending = false;
             availableSlots18.forEach((item) => {
                 if (
-                    item.available_capacity >= benificiaryList.length &&
-                    !isScheduling &&
+                    item.available_capacity >= selectedBeneficiaryList.length &&
                     !isSending
                 ) {
                     isSending = true;
@@ -92,108 +93,174 @@ function AutomaticSlotBooking({
     }, [availableSlots18]);
 
     useEffect(() => {
-        if (authToken.length > 20) getBeneficiary();
-    }, [authToken]);
+        getBeneficiary();
+    }, [token]);
 
     const getBeneficiary = () => {
-        if (!authToken) {
+        if (!token) {
             return;
         }
-        setauthAlert('');
-        let beneficiaryList = [];
+
         fetch('https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries', {
             headers: {
-                authorization: 'Bearer ' + authToken,
+                authorization: 'Bearer ' + token,
             },
         })
             .then((res) => res.json())
             .then((res) => {
-                res.beneficiaries.forEach((beneficiary) => {
-                    if (
-                        beneficiary.appointments &&
-                        beneficiary.appointments.length > 0
-                    ) {
-                        setAppointmentId(beneficiary.appointments[0]);
-                    } else {
-                        beneficiaryList.push(
-                            beneficiary.beneficiary_reference_id
-                        );
-                    }
-                });
-                setBenificiaryList(beneficiaryList);
+                setBenificiaryList(res.beneficiaries);
             })
             .catch((error) => {
                 console.log(error);
-                setAuthToken('');
-                setauthAlert('Please Enter correct Token');
+                setToken(null);
+                sessionExpiryVoice();
             });
     };
 
     const schedule = (centerData) => {
-        if (!authToken) {
+        if (!token && selectedBeneficiaryList.length === 0) {
             return;
         }
         setIsScheduling(true);
         fetch('https://cdn-api.co-vin.in/api/v2/appointment/schedule', {
             method: 'POST',
             headers: {
-                authorization: 'Bearer ' + authToken,
+                'content-type': 'application/json',
+                Authorization: 'Bearer ' + token,
             },
+            'content-type': 'application/json',
+            mode: 'cors',
             body: JSON.stringify({
                 dose: 1,
                 session_id: centerData.session_id,
-                slot: '11:00AM-01:00PM',
-                beneficiaries: benificiaryList,
+                center_id: centerData.center_id,
+                slot: centerData.slots[0],
+                beneficiaries: selectedBeneficiaryList,
             }),
         })
             .then((res) => res.json())
             .then((res) => {
-                setAppointmentId(res.appointment_id);
+                setAppointmentId(res);
+                setSelectedBeneficiaryList([]);
+
+                sessionExpiryVoice('Your booking is successfully completed');
             })
             .catch((error) => console.log(error))
             .finally(() => {
                 setIsScheduling(false);
+                getBeneficiary();
+                setShouldSchedule(false);
             });
     };
 
-    const handleAuthTokenChange = (e) => {
-        let text = e.target.value;
-        let token = text.replace(/\"/gi, '').replace('Bearer ', '');
-        setAuthToken(`${token}`);
+    const handleBeneficiarySelect = (e, data) => {
+        let list = [...selectedBeneficiaryList];
+        if (e.target.checked) {
+            list.push(data.beneficiary_reference_id);
+            list = [...new Array(...new Set(list))];
+        } else {
+            list = list.filter(
+                (item) => data.beneficiary_reference_id !== item
+            );
+        }
+
+        setSelectedBeneficiaryList(list);
     };
 
-    return (
-        <div className="App-header">
-            <div className="available-container">
-                <h2 className="title">Slots Available (18+)</h2>
-                {availableSlots18.length === 0 ? (
-                    <div className="loader">No slots available</div>
-                ) : (
-                    <div>{availableSlots18.map(renderList)}</div>
-                )}
-            </div>
-            <div className="all-centers-container">
-                <h2 className="title">Enter Token</h2>
-                {authToken ? (
-                    <div className="token token-alert">{authToken}</div>
-                ) : (
-                    <div className="token token-alert error">
-                        Please enter Auth Token
-                    </div>
-                )}
+    const handleSubmit = (status) => {
+        if (selectedBeneficiaryList.length === 0) {
+            setShouldSchedule(false);
+            return;
+        }
+        setShouldSchedule(status);
+    };
 
-                {authAlert && <div className="error">{authAlert}</div>}
-                <div className="token token-input">
-                    {/* <label>Token</label> */}
-                    <textarea
-                        type="text"
-                        onChange={handleAuthTokenChange}
-                        value={authToken}
-                    />
-                    {/* <Button label="Add" onClick={() => {}} /> */}
+    console.log(shouldSchedule);
+
+    return (
+        <>
+            {appointmentId && (
+                <div className="banner success">
+                    Your booking is successfully completed
+                </div>
+            )}
+
+            <div className="App-header">
+                <div className="available-container">
+                    <h2 className="title">Slots Available (18+)</h2>
+                    {availableSlots18.length === 0 ? (
+                        <div className="loader">No slots available</div>
+                    ) : (
+                        <div>{availableSlots18.map(renderList)}</div>
+                    )}
+                </div>
+                <div className="all-centers-container">
+                    <h2 className="title">Beneficiary Details</h2>
+                    {token ? (
+                        <div style={{ padding: 10 }}>
+                            <div>
+                                {selectedBeneficiaryList.length} Selected{' '}
+                            </div>
+                            {benificiaryList.map((beneficiary) => {
+                                let age =
+                                    parseInt(moment().format('YYYY')) -
+                                    parseInt(beneficiary.birth_year);
+
+                                if (age >= 45) return null;
+                                return (
+                                    <div className="row border-line be-info">
+                                        <div>
+                                            <input
+                                                disabled={shouldSchedule}
+                                                type="checkbox"
+                                                onChange={(e) =>
+                                                    handleBeneficiarySelect(
+                                                        e,
+                                                        beneficiary
+                                                    )
+                                                }
+                                                checked={
+                                                    selectedBeneficiaryList.indexOf(
+                                                        beneficiary.beneficiary_reference_id
+                                                    ) !== -1
+                                                }
+                                            />
+                                        </div>
+                                        <div>{beneficiary.name}</div>
+                                        <div>{age}</div>
+                                        <div>
+                                            {beneficiary.appointments.length}{' '}
+                                            appointments
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            <div className="row">
+                                <Button
+                                    label="Auto Book"
+                                    onClick={() => {
+                                        handleSubmit(true);
+                                    }}
+                                />
+                                <Button
+                                    label="cancel"
+                                    onClick={() => {
+                                        handleSubmit(false);
+                                    }}
+                                />
+                            </div>
+                            <div>
+                                {shouldSchedule
+                                    ? 'Please wait until automatic booking complete.'
+                                    : "Please select Beneficiary's and click on schedule"}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="loader error">Please Login</div>
+                    )}
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

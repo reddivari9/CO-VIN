@@ -32,6 +32,7 @@ html {
     padding: 10px;
     text-align: center;
     margin: 0;
+    text-transform: capitalize;
 }
 
 .row {
@@ -170,8 +171,27 @@ header {
     color: #d22938;
 }
 
+.success {
+    color: green;
+}
+
+.banner {
+    background-color: rgba(255, 255, 255, 0.9);
+    margin: 20px 20px 0;
+    padding: 10px;
+}
+
+.be-info > div {
+    width: 25%;
+}
+.be-info > div:first-child {
+    width: 20px;
+}
+
 @media only screen and (max-width: 600px) {
     .App-header,
+    .login,
+    .otp,
     .volume-controll {
         flex-direction: column;
         overflow: none;
