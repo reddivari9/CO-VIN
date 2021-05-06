@@ -30,7 +30,7 @@ const renderList = (center) => {
                 <div className="row">
                     <div>{center.name}</div>
                     <div>{center.pincode}</div>
-                    <div>{center.session_id}</div>
+                    <div>{center.district_name}</div>
                 </div>
             </div>
         </div>
@@ -47,6 +47,22 @@ const sessionExpiryVoice = (text) => {
 
     synthesizer.write(text);
 };
+
+let slotIndex = () => {
+    let hour = parseInt(moment().format('HH'));
+    let index = 0;
+    if (hour <= 7) {
+        index = 0;
+    } else if (hour <= 9) {
+        index = 1;
+    } else if (hour <= 11) {
+        index = 2;
+    } else if (hour <= 12) {
+        index = 3;
+    }
+
+    return index;
+};
 function AutomaticSlotBooking({
     availableSlots18,
     availableSlots45,
@@ -58,8 +74,10 @@ function AutomaticSlotBooking({
     const [shouldSchedule, setShouldSchedule] = useState(false);
     const [isScheduling, setIsScheduling] = useState(false);
     const [appointmentId, setAppointmentId] = useState(null);
+    const [scheduleStatusMessage, setScheduleStatusMessage] = useState(null);
 
     useEffect(() => {
+        getBeneficiary();
         let sessionExpiryalert = setInterval(() => {
             getBeneficiary();
         }, 110000);
@@ -108,6 +126,7 @@ function AutomaticSlotBooking({
         })
             .then((res) => res.json())
             .then((res) => {
+                setScheduleStatusMessage(null);
                 setBenificiaryList(res.beneficiaries);
             })
             .catch((error) => {
@@ -121,6 +140,14 @@ function AutomaticSlotBooking({
         if (!token && selectedBeneficiaryList.length === 0) {
             return;
         }
+
+        let today = moment().format('DD-MM-YYYY');
+        let isToday = moment(today).isSame(centerData.date, 'day');
+        let index = 0;
+        if (isToday) {
+            index = slotIndex();
+        }
+
         setIsScheduling(true);
         fetch('https://cdn-api.co-vin.in/api/v2/appointment/schedule', {
             method: 'POST',
@@ -134,19 +161,39 @@ function AutomaticSlotBooking({
                 dose: 1,
                 session_id: centerData.session_id,
                 center_id: centerData.center_id,
-                slot: centerData.slots[0],
+                slot: centerData.slots[index],
                 beneficiaries: selectedBeneficiaryList,
             }),
         })
             .then((res) => res.json())
             .then((res) => {
-                setAppointmentId(res);
-                setSelectedBeneficiaryList([]);
-
-                sessionExpiryVoice('Your booking is successfully completed');
+                if (res.error) {
+                    sessionExpiryVoice(res.error);
+                    setScheduleStatusMessage({
+                        type: 'error',
+                        msg: res.error,
+                    });
+                } else {
+                    setAppointmentId(res);
+                    setSelectedBeneficiaryList([]);
+                    setScheduleStatusMessage({
+                        type: 'success',
+                        msg: 'Your booking is successfully completed',
+                    });
+                    sessionExpiryVoice(
+                        'Your booking is successfully completed for ' +
+                            centerData.date +
+                            ' on ' +
+                            centerData.slots[index]
+                    );
+                }
             })
             .catch((error) => console.log(error))
             .finally(() => {
+                setScheduleStatusMessage({
+                    type: 'error',
+                    msg: 'Oops!! Something went wrong please try again',
+                });
                 setIsScheduling(false);
                 getBeneficiary();
                 setShouldSchedule(false);
@@ -175,13 +222,11 @@ function AutomaticSlotBooking({
         setShouldSchedule(status);
     };
 
-    console.log(shouldSchedule);
-
     return (
         <>
-            {appointmentId && (
-                <div className="banner success">
-                    Your booking is successfully completed
+            {scheduleStatusMessage && (
+                <div className={`banner ${scheduleStatusMessage.type}`}>
+                    {scheduleStatusMessage.msg}
                 </div>
             )}
 

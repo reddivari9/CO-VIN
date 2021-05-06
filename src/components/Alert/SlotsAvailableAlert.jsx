@@ -28,7 +28,7 @@ const renderList = (center) => {
                 <div className="row">
                     <div>{center.name}</div>
                     <div>{center.pincode}</div>
-                    <div>{center.session_id}</div>
+                    <div>{center.district_name}</div>
                 </div>
             </div>
         </div>
@@ -57,6 +57,8 @@ function SlotsAvailableAlert({
                     <h2 className="title">Centers (18+)</h2>
                     {loading ? (
                         <div className="loader">Fetching data...</div>
+                    ) : slotsList18.length === 0 ? (
+                        <div className="loader">No Centers available</div>
                     ) : (
                         <div>{slotsList18.map(renderList)}</div>
                     )}
@@ -75,6 +77,8 @@ function SlotsAvailableAlert({
                     <h2 className="title">Centers (45+)</h2>
                     {loading ? (
                         <div className="loader">Fetching data...</div>
+                    ) : slotsList45.length === 0 ? (
+                        <div className="loader">No Centers available</div>
                     ) : (
                         <div>{slotsList45.map(renderList)}</div>
                     )}

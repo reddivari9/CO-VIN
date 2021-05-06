@@ -32,7 +32,6 @@ function Login({ setToken }) {
         })
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
                 setSessionDetails({ txnId: res.txnId });
             })
             .catch((error) => console.log(error));
@@ -55,7 +54,6 @@ function Login({ setToken }) {
         })
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
                 setSessionDetails({
                     ...sessionDetails,
                     token: res.token,

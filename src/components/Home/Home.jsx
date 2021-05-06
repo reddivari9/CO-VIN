@@ -7,30 +7,47 @@
  */
 import React, { useEffect, useState } from 'react';
 
-function Home({ token }) {
-    const [location, setLocation] = useState({
-        state: 16,
-        district: 29,
-    });
+function Home({ token, setDistrictId }) {
+    const [state, setState] = useState(16);
+    const [district, setDistrict] = useState(null);
+    const [states, setStates] = useState([]);
+    const [districts, setDistricts] = useState([]);
 
     useEffect(() => {
         getState();
-        getDistrict();
     }, []);
+
+    useEffect(() => {
+        getDistrict();
+    }, [state]);
+
+    useEffect(() => {
+        if (!district) {
+            setState(16);
+            setDistrict(194);
+        } else {
+            setDistrictId(district);
+        }
+    }, [district]);
 
     const getState = () => {
         fetch('https://cdn-api.co-vin.in/api/v2/admin/location/states')
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
+                if (res.states) {
+                    setStates(res.states);
+                    if (state === 16 && !district) {
+                        setDistrict(294);
+                    }
+                }
             })
             .catch((error) => console.log(error));
     };
     const getDistrict = () => {
-        if (!location.state) return;
+        if (!state) return;
         fetch(
             'https://cdn-api.co-vin.in/api/v2/admin/location/districts/' +
-                location.state,
+                state,
             {
                 headers: {
                     'content-type': 'application/json',
@@ -41,11 +58,52 @@ function Home({ token }) {
         )
             .then((res) => res.json())
             .then((res) => {
-                console.log(res);
+                if (res.districts) {
+                    setDistricts(res.districts);
+                    if (state === 16 && !district) {
+                        setDistrict(294);
+                    } else {
+                        setDistrict(res.districts[0].district_id);
+                    }
+                }
             })
             .catch((error) => console.log(error));
     };
-    return <div></div>;
+
+    return (
+        <div className="row">
+            <div>
+                <select
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                >
+                    {states.map((state) => {
+                        return (
+                            <option value={state.state_id}>
+                                {state.state_name}
+                            </option>
+                        );
+                    })}
+                </select>
+            </div>
+            <div>
+                <select
+                    value={district}
+                    onChange={(e) => {
+                        setDistrict(e.target.value);
+                    }}
+                >
+                    {districts.map((district) => {
+                        return (
+                            <option value={district.district_id}>
+                                {district.district_name}
+                            </option>
+                        );
+                    })}
+                </select>
+            </div>
+        </div>
+    );
 }
 
 export default Home;

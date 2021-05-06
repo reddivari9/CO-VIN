@@ -2,7 +2,7 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
- * @modify date 2021-05-05 23:35:48
+ * @modify date 2021-05-06 13:38:50
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
@@ -27,6 +27,7 @@ function App() {
     const [availableSlots45, setavailableSlots45] = useState([]);
     const [volumeMute18, setVolumeMute18] = useState(true);
     const [volumeMute45, setVolumeMute45] = useState(false);
+    const [districtId, setDistrictId] = useState(294);
 
     const getData = () => {
         setLoading(true);
@@ -34,7 +35,7 @@ function App() {
         let baseUrl =
             'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict';
 
-        fetch(baseUrl + '?district_id=294&date=' + today)
+        fetch(baseUrl + '?district_id=' + districtId + '&date=' + today)
             .then((res) => res.json())
             .then((res) => {
                 let list18 = [];
@@ -81,7 +82,6 @@ function App() {
 
     useEffect(() => {
         if (availableSlots45.length > 0 && volumeMute45) {
-            // console.log('Available for 45+ voice....');
             vaccineAvailableVoice('45+');
         }
     }, [availableSlots45]);
@@ -98,7 +98,7 @@ function App() {
         return () => {
             clearTimeout(fetchInterval);
         };
-    }, []);
+    }, [districtId]);
 
     const vaccineAvailableVoice = (age) => {
         var voice = TextToSpeechStream.getVoiceByName('Alex');
@@ -117,6 +117,7 @@ function App() {
         sessionStorage.setItem('token', token);
     };
 
+    console.log(token);
     return (
         <Router>
             <div>
@@ -127,12 +128,12 @@ function App() {
                                 <Link to="/">Home</Link>
                             </li>
                             <li>
-                                <Link to="/automatic_booking">Booking</Link>
-                            </li>
-                            <li>
                                 <Link to="/slots_available">
                                     Slots available
                                 </Link>
+                            </li>
+                            <li>
+                                <Link to="/automatic_booking">Booking</Link>
                             </li>
                         </ul>
                     </nav>
@@ -162,7 +163,29 @@ function App() {
                         </Button>
                     </div>
                 </header>
-                <Home token={token} />
+                <div className="row header-baner">
+                    <Home token={token} setDistrictId={setDistrictId} />
+                    <div className="row right-align my-info">
+                        @ Praveen Reddy Reddivari | praveen.reddivari@gmail.com
+                        <div className="contact-icons">
+                            <a
+                                href="https://www.linkedin.com/in/praveen-reddy-b8481b77/"
+                                target="_blank"
+                                class="fa fa-linkedin"
+                            ></a>
+                            <a
+                                href="https://www.facebook.com/praveen.reddivari"
+                                target="_blank"
+                                class="fa fa-facebook"
+                            ></a>
+                            <a
+                                href="https://twitter.com/reddivari_9"
+                                target="_blank"
+                                class="fa fa-twitter"
+                            ></a>
+                        </div>
+                    </div>
+                </div>
                 <Switch>
                     <Route path="/slots_available">
                         <SlotsAvailableAlert
@@ -182,11 +205,12 @@ function App() {
                         />
                     </Route>
                     <Route path="/">
-                        <AutomaticSlotBooking
+                        <SlotsAvailableAlert
+                            loading={loading}
+                            slotsList18={slotsList18}
+                            slotsList45={slotsList45}
                             availableSlots18={availableSlots18}
                             availableSlots45={availableSlots45}
-                            token={token}
-                            setToken={setTokenHandler}
                         />
                     </Route>
                 </Switch>
