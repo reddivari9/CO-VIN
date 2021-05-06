@@ -67,7 +67,7 @@ function Login({ setToken }) {
         <div>
             {!sessionDetails.txnId && (
                 <div className="row login">
-                    <div>Mobile No. </div>
+                    <div className="input-label black">Mobile No. </div>
                     <div>
                         <input
                             type="tel"
@@ -83,7 +83,7 @@ function Login({ setToken }) {
             )}
             {sessionDetails.txnId && (
                 <div className="row otp">
-                    <div>Enter OTP </div>
+                    <div className="input-label black">Enter OTP </div>
                     <div>
                         <input
                             type="number"

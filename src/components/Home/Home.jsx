@@ -71,7 +71,7 @@ function Home({ token, setDistrictId }) {
     };
 
     return (
-        <div className="row">
+        <>
             <div>
                 <select
                     value={state}
@@ -102,7 +102,7 @@ function Home({ token, setDistrictId }) {
                     })}
                 </select>
             </div>
-        </div>
+        </>
     );
 }
 

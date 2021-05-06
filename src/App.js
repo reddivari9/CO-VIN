@@ -2,7 +2,7 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
- * @modify date 2021-05-06 13:38:50
+ * @modify date 2021-05-06 15:02:21
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ function App() {
     const [volumeMute18, setVolumeMute18] = useState(true);
     const [volumeMute45, setVolumeMute45] = useState(false);
     const [districtId, setDistrictId] = useState(294);
+    const [vaccineType, setVaccineType] = useState('ALL');
 
     const getData = () => {
         setLoading(true);
@@ -35,7 +36,13 @@ function App() {
         let baseUrl =
             'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict';
 
-        fetch(baseUrl + '?district_id=' + districtId + '&date=' + today)
+        baseUrl += '?district_id=' + districtId + '&date=' + today;
+
+        if (vaccineType !== 'ALL') {
+            baseUrl += '&vaccine=' + vaccineType;
+        }
+
+        fetch(baseUrl)
             .then((res) => res.json())
             .then((res) => {
                 let list18 = [];
@@ -98,7 +105,7 @@ function App() {
         return () => {
             clearTimeout(fetchInterval);
         };
-    }, [districtId]);
+    }, [districtId, vaccineType]);
 
     const vaccineAvailableVoice = (age) => {
         var voice = TextToSpeechStream.getVoiceByName('Alex');
@@ -117,7 +124,6 @@ function App() {
         sessionStorage.setItem('token', token);
     };
 
-    console.log(token);
     return (
         <Router>
             <div>
@@ -164,7 +170,20 @@ function App() {
                     </div>
                 </header>
                 <div className="row header-baner">
-                    <Home token={token} setDistrictId={setDistrictId} />
+                    <div className="row">
+                        <Home token={token} setDistrictId={setDistrictId} />
+                        <div>
+                            <label className="input-label">Vaccine Type</label>
+                            <select
+                                value={vaccineType}
+                                onChange={(e) => setVaccineType(e.target.value)}
+                            >
+                                <option value="ALL">ALL</option>
+                                <option value="COVAXIN">COVAXIN</option>
+                                <option value="COVISHIELD">COVISHIELD</option>
+                            </select>
+                        </div>
+                    </div>
                     <div className="row right-align my-info">
                         @ Praveen Reddy Reddivari | praveen.reddivari@gmail.com
                         <div className="contact-icons">

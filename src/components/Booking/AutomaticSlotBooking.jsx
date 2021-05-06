@@ -80,11 +80,7 @@ function AutomaticSlotBooking({
         getBeneficiary();
         let sessionExpiryalert = setInterval(() => {
             getBeneficiary();
-        }, 110000);
-
-        setTimeout(() => {
-            sessionExpiryVoice('Session expired');
-        }, 840000);
+        }, 600000);
 
         return () => {
             clearTimeout(sessionExpiryalert);
@@ -132,7 +128,7 @@ function AutomaticSlotBooking({
             .catch((error) => {
                 console.log(error);
                 setToken(null);
-                sessionExpiryVoice();
+                sessionExpiryVoice('Session expired');
             });
     };
 
@@ -168,7 +164,10 @@ function AutomaticSlotBooking({
             .then((res) => res.json())
             .then((res) => {
                 if (res.error) {
-                    sessionExpiryVoice(res.error);
+                    sessionExpiryVoice(
+                        res.error ||
+                            'Oops! Something went wrong. Please try again.'
+                    );
                     setScheduleStatusMessage({
                         type: 'error',
                         msg: res.error,
