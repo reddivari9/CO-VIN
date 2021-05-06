@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/CO-VIN/static/css/main.ee748b8e.chunk.css",
-    "main.js": "/CO-VIN/static/js/main.4ba5487c.chunk.js",
-    "main.js.map": "/CO-VIN/static/js/main.4ba5487c.chunk.js.map",
-    "runtime-main.js": "/CO-VIN/static/js/runtime-main.ffea9184.js",
-    "runtime-main.js.map": "/CO-VIN/static/js/runtime-main.ffea9184.js.map",
-    "static/js/2.b6df094d.chunk.js": "/CO-VIN/static/js/2.b6df094d.chunk.js",
-    "static/js/2.b6df094d.chunk.js.map": "/CO-VIN/static/js/2.b6df094d.chunk.js.map",
-    "index.html": "/CO-VIN/index.html",
-    "static/css/main.ee748b8e.chunk.css.map": "/CO-VIN/static/css/main.ee748b8e.chunk.css.map",
-    "static/js/2.b6df094d.chunk.js.LICENSE.txt": "/CO-VIN/static/js/2.b6df094d.chunk.js.LICENSE.txt"
+    "main.css": "/CO-WIN/static/css/main.ee748b8e.chunk.css",
+    "main.js": "/CO-WIN/static/js/main.4ba5487c.chunk.js",
+    "main.js.map": "/CO-WIN/static/js/main.4ba5487c.chunk.js.map",
+    "runtime-main.js": "/CO-WIN/static/js/runtime-main.56c20255.js",
+    "runtime-main.js.map": "/CO-WIN/static/js/runtime-main.56c20255.js.map",
+    "static/js/2.b6df094d.chunk.js": "/CO-WIN/static/js/2.b6df094d.chunk.js",
+    "static/js/2.b6df094d.chunk.js.map": "/CO-WIN/static/js/2.b6df094d.chunk.js.map",
+    "index.html": "/CO-WIN/index.html",
+    "static/css/main.ee748b8e.chunk.css.map": "/CO-WIN/static/css/main.ee748b8e.chunk.css.map",
+    "static/js/2.b6df094d.chunk.js.LICENSE.txt": "/CO-WIN/static/js/2.b6df094d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.ffea9184.js",
+    "static/js/runtime-main.56c20255.js",
     "static/js/2.b6df094d.chunk.js",
     "static/css/main.ee748b8e.chunk.css",
     "static/js/main.4ba5487c.chunk.js"
