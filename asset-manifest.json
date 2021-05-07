@@ -1,20 +1,20 @@
 {
   "files": {
-    "main.css": "/CO-WIN/static/css/main.b85649f8.chunk.css",
-    "main.js": "/CO-WIN/static/js/main.ec10c9eb.chunk.js",
-    "main.js.map": "/CO-WIN/static/js/main.ec10c9eb.chunk.js.map",
+    "main.css": "/CO-WIN/static/css/main.98ec71a0.chunk.css",
+    "main.js": "/CO-WIN/static/js/main.e5704488.chunk.js",
+    "main.js.map": "/CO-WIN/static/js/main.e5704488.chunk.js.map",
     "runtime-main.js": "/CO-WIN/static/js/runtime-main.56c20255.js",
     "runtime-main.js.map": "/CO-WIN/static/js/runtime-main.56c20255.js.map",
     "static/js/2.b6df094d.chunk.js": "/CO-WIN/static/js/2.b6df094d.chunk.js",
     "static/js/2.b6df094d.chunk.js.map": "/CO-WIN/static/js/2.b6df094d.chunk.js.map",
     "index.html": "/CO-WIN/index.html",
-    "static/css/main.b85649f8.chunk.css.map": "/CO-WIN/static/css/main.b85649f8.chunk.css.map",
+    "static/css/main.98ec71a0.chunk.css.map": "/CO-WIN/static/css/main.98ec71a0.chunk.css.map",
     "static/js/2.b6df094d.chunk.js.LICENSE.txt": "/CO-WIN/static/js/2.b6df094d.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.56c20255.js",
     "static/js/2.b6df094d.chunk.js",
-    "static/css/main.b85649f8.chunk.css",
-    "static/js/main.ec10c9eb.chunk.js"
+    "static/css/main.98ec71a0.chunk.css",
+    "static/js/main.e5704488.chunk.js"
   ]
 }
