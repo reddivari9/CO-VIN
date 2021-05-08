@@ -2,7 +2,7 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
- * @modify date 2021-05-06 15:02:21
+ * @modify date 2021-05-07 16:25:28
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
@@ -143,7 +143,9 @@ function App() {
                             </li>
                         </ul>
                     </nav>
+
                     <div>{!token && <Login setToken={setTokenHandler} />}</div>
+
                     <div className="volume-controll">
                         <Button
                             onClick={() => setVolumeMute18(!volumeMute18)}

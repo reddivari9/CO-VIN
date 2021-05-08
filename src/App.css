@@ -220,6 +220,11 @@ header {
     color: #000;
 }
 
+.captcha {
+    background-color: #fff;
+    padding: 10px;
+}
+
 @media only screen and (max-width: 600px) {
     .App-header,
     .login,

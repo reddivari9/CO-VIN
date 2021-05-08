@@ -75,6 +75,9 @@ function AutomaticSlotBooking({
     const [isScheduling, setIsScheduling] = useState(false);
     const [appointmentId, setAppointmentId] = useState(null);
     const [scheduleStatusMessage, setScheduleStatusMessage] = useState(null);
+    const [captcha, setCaptcha] = useState('');
+    const [slotDetails, setSlotDetails] = useState({});
+    const [isGettingCaptcha, setisGettingCaptcha] = useState(false);
 
     useEffect(() => {
         getBeneficiary();
@@ -97,10 +100,14 @@ function AutomaticSlotBooking({
             availableSlots18.forEach((item) => {
                 if (
                     item.available_capacity >= selectedBeneficiaryList.length &&
-                    !isSending
+                    !isSending &&
+                    !isGettingCaptcha
                 ) {
                     isSending = true;
-                    schedule(item);
+                    // schedule(item);
+                    setSlotDetails(item);
+                    getReCaptcha(item);
+                    setisGettingCaptcha(true);
                 }
             });
         }
@@ -109,6 +116,28 @@ function AutomaticSlotBooking({
     useEffect(() => {
         getBeneficiary();
     }, [token]);
+
+    const getReCaptcha = () => {
+        fetch('https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha', {
+            headers: {
+                authorization: 'Bearer ' + token,
+            },
+            mode: 'cors',
+            method: 'POST',
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.captcha) {
+                    let captcha = res.captcha.replace(/\\/gi);
+                    document.querySelector('.captcha-svg').innerHTML = captcha;
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                // setToken(null);
+                // sessionExpiryVoice('Session expired');
+            });
+    };
 
     const getBeneficiary = () => {
         if (!token) {
@@ -151,7 +180,6 @@ function AutomaticSlotBooking({
                 'content-type': 'application/json',
                 Authorization: 'Bearer ' + token,
             },
-            'content-type': 'application/json',
             mode: 'cors',
             body: JSON.stringify({
                 dose: 1,
@@ -159,11 +187,16 @@ function AutomaticSlotBooking({
                 center_id: centerData.center_id,
                 slot: centerData.slots[index],
                 beneficiaries: selectedBeneficiaryList,
+                captcha: captcha,
             }),
         })
             .then((res) => res.json())
             .then((res) => {
                 if (res.error) {
+                    if (res.error === 'Please enter valid security code') {
+                        getReCaptcha();
+                        setCaptcha('');
+                    }
                     sessionExpiryVoice(
                         res.error ||
                             'Oops! Something went wrong. Please try again.'
@@ -185,6 +218,8 @@ function AutomaticSlotBooking({
                             ' on ' +
                             centerData.slots[index]
                     );
+                    document.querySelector('.captcha-svg').innerHTML = '';
+                    setCaptcha('');
                 }
             })
             .catch((error) => console.log(error))
@@ -193,9 +228,11 @@ function AutomaticSlotBooking({
                     type: 'error',
                     msg: 'Oops!! Something went wrong please try again',
                 });
+                setCaptcha('');
                 setIsScheduling(false);
                 getBeneficiary();
                 setShouldSchedule(false);
+                setisGettingCaptcha(false);
             });
     };
 
@@ -297,6 +334,27 @@ function AutomaticSlotBooking({
                                 {shouldSchedule
                                     ? 'Please wait until automatic booking complete.'
                                     : "Please select Beneficiary's and click on schedule"}
+                            </div>
+
+                            <div className="captcha">
+                                <div className="input-label black">
+                                    Enter captcha ones you receive it
+                                </div>
+                                <div className="row">
+                                    <div className="captcha-svg"></div>
+                                    <input
+                                        onChange={(e) => {
+                                            setCaptcha(e.target.value);
+                                        }}
+                                        value={captcha}
+                                    />
+                                    <Button
+                                        label="Submit & book now"
+                                        onClick={() => {
+                                            schedule(slotDetails);
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     ) : (
