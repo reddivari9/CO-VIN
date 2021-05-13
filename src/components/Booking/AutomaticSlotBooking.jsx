@@ -68,6 +68,7 @@ function AutomaticSlotBooking({
     availableSlots45,
     token,
     setToken,
+    age,
 }) {
     const [benificiaryList, setBenificiaryList] = useState([]);
     const [selectedBeneficiaryList, setSelectedBeneficiaryList] = useState([]);
@@ -78,6 +79,7 @@ function AutomaticSlotBooking({
     const [captcha, setCaptcha] = useState('');
     const [slotDetails, setSlotDetails] = useState({});
     const [isGettingCaptcha, setisGettingCaptcha] = useState(false);
+    const [slotsList, setSlotsList] = useState([]);
 
     useEffect(() => {
         getBeneficiary();
@@ -91,13 +93,27 @@ function AutomaticSlotBooking({
     }, []);
 
     useEffect(() => {
+        setSelectedBeneficiaryList([]);
+        setShouldSchedule(false);
+    }, [age]);
+
+    useEffect(() => {
+        if (age === 18) {
+            setSlotsList(availableSlots18);
+        }
+        if (age === 45) {
+            setSlotsList(availableSlots45);
+        }
+    }, [availableSlots18, availableSlots45]);
+
+    useEffect(() => {
         if (
-            availableSlots18.length > 0 &&
+            slotsList.length > 0 &&
             selectedBeneficiaryList.length &&
             shouldSchedule
         ) {
             let isSending = false;
-            availableSlots18.forEach((item) => {
+            slotsList.forEach((item) => {
                 if (
                     item.available_capacity >= selectedBeneficiaryList.length &&
                     !isSending &&
@@ -111,7 +127,7 @@ function AutomaticSlotBooking({
                 }
             });
         }
-    }, [availableSlots18]);
+    }, [slotsList]);
 
     useEffect(() => {
         getBeneficiary();
@@ -257,6 +273,7 @@ function AutomaticSlotBooking({
         }
         setShouldSchedule(status);
     };
+    console.log(selectedBeneficiaryList);
 
     return (
         <>
@@ -268,11 +285,11 @@ function AutomaticSlotBooking({
 
             <div className="App-header">
                 <div className="available-container">
-                    <h2 className="title">Slots Available (18+)</h2>
-                    {availableSlots18.length === 0 ? (
+                    <h2 className="title">Slots Available ({age}+)</h2>
+                    {slotsList.length === 0 ? (
                         <div className="loader">No slots available</div>
                     ) : (
-                        <div>{availableSlots18.map(renderList)}</div>
+                        <div>{slotsList.map(renderList)}</div>
                     )}
                 </div>
                 <div className="all-centers-container">
@@ -283,11 +300,15 @@ function AutomaticSlotBooking({
                                 {selectedBeneficiaryList.length} Selected{' '}
                             </div>
                             {benificiaryList.map((beneficiary) => {
-                                let age =
+                                let _age =
                                     parseInt(moment().format('YYYY')) -
                                     parseInt(beneficiary.birth_year);
-
-                                if (age >= 45) return null;
+                                if (age === 18 && _age >= 45) {
+                                    return null;
+                                }
+                                if (age === 45 && _age < 45) {
+                                    return null;
+                                }
                                 return (
                                     <div className="row border-line be-info">
                                         <div>
@@ -308,7 +329,7 @@ function AutomaticSlotBooking({
                                             />
                                         </div>
                                         <div>{beneficiary.name}</div>
-                                        <div>{age}</div>
+                                        <div>{_age}</div>
                                         <div>
                                             {beneficiary.appointments.length}{' '}
                                             appointments

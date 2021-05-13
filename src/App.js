@@ -2,7 +2,7 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
- * @modify date 2021-05-07 16:25:28
+ * @modify date 2021-05-13 18:29:12
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
@@ -29,6 +29,18 @@ function App() {
     const [volumeMute45, setVolumeMute45] = useState(false);
     const [districtId, setDistrictId] = useState(294);
     const [vaccineType, setVaccineType] = useState('ALL');
+    const [age, setAge] = useState(18);
+
+    useEffect(() => {
+        if (age === 18) {
+            setVolumeMute18(true);
+            setVolumeMute45(false);
+        }
+        if (age === 45) {
+            setVolumeMute18(false);
+            setVolumeMute45(true);
+        }
+    }, [age]);
 
     const getData = () => {
         setLoading(true);
@@ -124,6 +136,8 @@ function App() {
         sessionStorage.setItem('token', token);
     };
 
+    console.log(volumeMute18, volumeMute45, age);
+
     return (
         <Router>
             <div>
@@ -186,6 +200,16 @@ function App() {
                             </select>
                         </div>
                     </div>
+                    <div>
+                        <label className="input-label">Age Limit</label>
+                        <select
+                            value={age}
+                            onChange={(e) => setAge(parseInt(e.target.value))}
+                        >
+                            <option value={18}>18+</option>
+                            <option value={45}>45+</option>
+                        </select>
+                    </div>
                     <div className="row right-align my-info">
                         @ Praveen Reddy Reddivari | praveen.reddivari@gmail.com
                         <div className="contact-icons">
@@ -210,6 +234,7 @@ function App() {
                 <Switch>
                     <Route path="/slots_available">
                         <SlotsAvailableAlert
+                            age={age}
                             loading={loading}
                             slotsList18={slotsList18}
                             slotsList45={slotsList45}
@@ -219,6 +244,7 @@ function App() {
                     </Route>
                     <Route path="/automatic_booking">
                         <AutomaticSlotBooking
+                            age={age}
                             availableSlots18={availableSlots18}
                             availableSlots45={availableSlots45}
                             token={token}
@@ -227,6 +253,7 @@ function App() {
                     </Route>
                     <Route path="/">
                         <SlotsAvailableAlert
+                            age={age}
                             loading={loading}
                             slotsList18={slotsList18}
                             slotsList45={slotsList45}

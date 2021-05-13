@@ -41,9 +41,15 @@ function SlotsAvailableAlert({
     slotsList45,
     availableSlots18,
     availableSlots45,
+    age,
 }) {
     return (
-        <div>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: age === 45 ? 'column-reverse' : 'column',
+            }}
+        >
             <div className="App-header">
                 <div className="available-container">
                     <h2 className="title">Slots Available (18+)</h2>
