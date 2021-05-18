@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/CO-WIN/static/css/main.496b2797.chunk.css",
-    "main.js": "/CO-WIN/static/js/main.4dd08578.chunk.js",
-    "main.js.map": "/CO-WIN/static/js/main.4dd08578.chunk.js.map",
+    "main.js": "/CO-WIN/static/js/main.1aa5862d.chunk.js",
+    "main.js.map": "/CO-WIN/static/js/main.1aa5862d.chunk.js.map",
     "runtime-main.js": "/CO-WIN/static/js/runtime-main.56c20255.js",
     "runtime-main.js.map": "/CO-WIN/static/js/runtime-main.56c20255.js.map",
     "static/js/2.5f0a757c.chunk.js": "/CO-WIN/static/js/2.5f0a757c.chunk.js",
@@ -15,6 +15,6 @@
     "static/js/runtime-main.56c20255.js",
     "static/js/2.5f0a757c.chunk.js",
     "static/css/main.496b2797.chunk.css",
-    "static/js/main.4dd08578.chunk.js"
+    "static/js/main.1aa5862d.chunk.js"
   ]
 }
