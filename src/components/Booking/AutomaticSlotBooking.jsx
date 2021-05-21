@@ -19,12 +19,29 @@ const renderList = (center) => {
                 <div className="row">
                     <div>{center.date}</div>
                     <div>{center.vaccine}</div>
-                    <div
-                        className={
-                            center.available_capacity > 0 ? 'green' : 'red'
-                        }
-                    >
-                        {center.available_capacity}
+                    <div>
+                        Dose 1:{' '}
+                        <span
+                            className={
+                                center.available_capacity_dose1 > 0
+                                    ? 'green'
+                                    : 'red'
+                            }
+                        >
+                            {center.available_capacity_dose1}
+                        </span>
+                    </div>
+                    <div>
+                        Dose 2:{' '}
+                        <span
+                            className={
+                                center.available_capacity_dose2 > 0
+                                    ? 'green'
+                                    : 'red'
+                            }
+                        >
+                            {center.available_capacity_dose2}
+                        </span>
                     </div>
                 </div>
                 <div className="row">
@@ -44,6 +61,7 @@ const sessionExpiryVoice = (text) => {
         pitch: 1,
         rate: 1,
     });
+    synthesizer.cancel();
 
     synthesizer.write(text);
 };
@@ -69,6 +87,7 @@ function AutomaticSlotBooking({
     token,
     setToken,
     age,
+    dose,
 }) {
     const [benificiaryList, setBenificiaryList] = useState([]);
     const [selectedBeneficiaryList, setSelectedBeneficiaryList] = useState([]);
@@ -198,7 +217,7 @@ function AutomaticSlotBooking({
             },
             mode: 'cors',
             body: JSON.stringify({
-                dose: 1,
+                dose: dose,
                 session_id: centerData.session_id,
                 center_id: centerData.center_id,
                 slot: centerData.slots[index],
@@ -273,7 +292,6 @@ function AutomaticSlotBooking({
         }
         setShouldSchedule(status);
     };
-    console.log(selectedBeneficiaryList);
 
     return (
         <>
@@ -339,7 +357,7 @@ function AutomaticSlotBooking({
                             })}
                             <div className="row">
                                 <Button
-                                    label="Auto Book"
+                                    label="Start Auto Book"
                                     onClick={() => {
                                         handleSubmit(true);
                                     }}
@@ -353,12 +371,12 @@ function AutomaticSlotBooking({
                             </div>
                             <div>
                                 {shouldSchedule
-                                    ? 'Please wait until automatic booking complete.'
-                                    : "Please select Beneficiary's and click on schedule"}
+                                    ? 'Please wait until you receive Captcha ones slots available.'
+                                    : "Please select Beneficiary's and click on 'Start Auto Book' Button"}
                             </div>
-
+                            <br />
                             <div className="captcha">
-                                <div className="input-label black">
+                                <div className="black">
                                     Enter captcha ones you receive it
                                 </div>
                                 <div className="row">
@@ -375,6 +393,13 @@ function AutomaticSlotBooking({
                                             schedule(slotDetails);
                                         }}
                                     />
+                                </div>
+                                <br />
+                                <div className="black">
+                                    <strong>Note: </strong> Captcha will be
+                                    available if you select Beneficiary's and
+                                    click on 'Start Auto Book' Button and ones
+                                    slots are available
                                 </div>
                             </div>
                         </div>

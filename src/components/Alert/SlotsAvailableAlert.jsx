@@ -17,12 +17,29 @@ const renderList = (center) => {
                 <div className="row">
                     <div>{center.date}</div>
                     <div>{center.vaccine}</div>
-                    <div
-                        className={
-                            center.available_capacity > 0 ? 'green' : 'red'
-                        }
-                    >
-                        {center.available_capacity}
+                    <div>
+                        Dose 1:{' '}
+                        <span
+                            className={
+                                center.available_capacity_dose1 > 0
+                                    ? 'green'
+                                    : 'red'
+                            }
+                        >
+                            {center.available_capacity_dose1}
+                        </span>
+                    </div>
+                    <div>
+                        Dose 2:{' '}
+                        <span
+                            className={
+                                center.available_capacity_dose2 > 0
+                                    ? 'green'
+                                    : 'red'
+                            }
+                        >
+                            {center.available_capacity_dose2}
+                        </span>
                     </div>
                 </div>
                 <div className="row">
@@ -42,6 +59,7 @@ function SlotsAvailableAlert({
     availableSlots18,
     availableSlots45,
     age,
+    dose,
 }) {
     return (
         <div
@@ -52,7 +70,7 @@ function SlotsAvailableAlert({
         >
             <div className="App-header">
                 <div className="available-container">
-                    <h2 className="title">Slots Available (18+)</h2>
+                    <h2 className="title">Slots Available (18+) Dose {dose}</h2>
                     {availableSlots18.length === 0 ? (
                         <div className="loader">No slots available</div>
                     ) : (

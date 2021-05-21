@@ -73,6 +73,7 @@ function Home({ token, setDistrictId }) {
     return (
         <>
             <div>
+                <label className="input-label">State</label>
                 <select
                     value={state}
                     onChange={(e) => setState(e.target.value)}
@@ -87,6 +88,7 @@ function Home({ token, setDistrictId }) {
                 </select>
             </div>
             <div>
+                <label className="input-label">District</label>
                 <select
                     value={district}
                     onChange={(e) => {

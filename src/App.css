@@ -65,11 +65,13 @@ html {
 .green {
     color: white;
     background: green;
+    padding: 2px 5px;
 }
 
 .red {
     color: white;
     background: red;
+    padding: 2px 5px;
 }
 
 .loader {
@@ -200,7 +202,7 @@ header {
 .header-baner {
     position: sticky;
     justify-content: space-between;
-    padding: 10px;
+    padding: 5px;
     top: 68px;
     background-color: #797777;
     z-index: 10;
