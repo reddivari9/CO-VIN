@@ -153,7 +153,7 @@ function AutomaticSlotBooking({
     }, [token]);
 
     const getReCaptcha = () => {
-        fetch('https://cdn-api.co-vin.in/api/v2/auth/getRecaptcha', {
+        fetch('https://www.cowin.gov.in/api/v2/auth/getRecaptcha', {
             headers: {
                 authorization: 'Bearer ' + token,
             },
@@ -179,7 +179,7 @@ function AutomaticSlotBooking({
             return;
         }
 
-        fetch('https://cdn-api.co-vin.in/api/v2/appointment/beneficiaries', {
+        fetch('https://www.cowin.gov.in/api/v2/appointment/beneficiaries', {
             headers: {
                 authorization: 'Bearer ' + token,
             },
@@ -209,7 +209,7 @@ function AutomaticSlotBooking({
         }
 
         setIsScheduling(true);
-        fetch('https://cdn-api.co-vin.in/api/v2/appointment/schedule', {
+        fetch('https://www.cowin.gov.in/api/v2/appointment/schedule', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',

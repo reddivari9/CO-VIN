@@ -31,7 +31,7 @@ function Home({ token, setDistrictId }) {
     }, [district]);
 
     const getState = () => {
-        fetch('https://cdn-api.co-vin.in/api/v2/admin/location/states')
+        fetch('https://www.cowin.gov.in/api/v2/admin/location/states')
             .then((res) => res.json())
             .then((res) => {
                 if (res.states) {
@@ -46,8 +46,7 @@ function Home({ token, setDistrictId }) {
     const getDistrict = () => {
         if (!state) return;
         fetch(
-            'https://cdn-api.co-vin.in/api/v2/admin/location/districts/' +
-                state,
+            'https://www.cowin.gov.in/api/v2/admin/location/districts/' + state,
             {
                 headers: {
                     'content-type': 'application/json',

@@ -17,11 +17,10 @@ function Login({ setToken }) {
     const getOtp = () => {
         if (!mobile) return;
 
-        fetch('https://cdn-api.co-vin.in/api/v2/auth/generateMobileOTP', {
+        fetch('https://www.cowin.gov.in/api/v2/auth/generateMobileOTP', {
             body: JSON.stringify({
                 mobile: mobile,
-                secret:
-                    'U2FsdGVkX1/3I5UgN1RozGJtexc1kfsaCKPadSux9LY+cVUADlIDuKn0wCN+Y8iB4ceu6gFxNQ5cCfjm1BsmRQ==',
+                secret: 'U2FsdGVkX1/3I5UgN1RozGJtexc1kfsaCKPadSux9LY+cVUADlIDuKn0wCN+Y8iB4ceu6gFxNQ5cCfjm1BsmRQ==',
             }),
             headers: {
                 'content-type': 'application/json',
@@ -40,7 +39,7 @@ function Login({ setToken }) {
         if (!otp) return;
 
         let otpHasKey = CryptoJS.SHA256(otp).toString(CryptoJS.enc.Hex);
-        fetch('https://cdn-api.co-vin.in/api/v2/auth/validateMobileOtp', {
+        fetch('https://www.cowin.gov.in/api/v2/auth/validateMobileOtp', {
             body: JSON.stringify({
                 otp: otpHasKey,
                 txnId: sessionDetails.txnId,

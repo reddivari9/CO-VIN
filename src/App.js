@@ -2,7 +2,11 @@
  * @author Praveen Reddy
  * @email pr250210@ncr.com
  * @create date 2021-05-03 23:45:24
+<<<<<<< Updated upstream
  * @modify date 2021-05-18 09:44:57
+=======
+ * @modify date 2021-06-05 18:42:26
+>>>>>>> Stashed changes
  * @desc [description]
  */
 import React, { useEffect, useState } from 'react';
@@ -48,7 +52,7 @@ function App() {
         setLoading(true);
         var today = moment().format('DD-MM-YYYY');
         let baseUrl =
-            'https://cdn-api.co-vin.in/api/v2/appointment/sessions/calendarByDistrict';
+            'https://www.cowin.gov.in/api/v2/appointment/sessions/public/calendarByDistrict';
 
         baseUrl += '?district_id=' + districtId + '&date=' + today;
 
